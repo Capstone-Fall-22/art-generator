@@ -30,5 +30,4 @@ def load_dataset(name, normalize=False, batch=False, colab=False):
     if batch:
         dataset = dataset.batch(constants['batch_size'])
 
-
     return dataset
