@@ -7,15 +7,17 @@ def get_constants():
             'height': 28,
             'color_mode': 'grayscale',
             'batch_size': 100,
-            'local': '../data/mnist',
+            'normalization_factor': 1/255,
+            'local': 'data/mnist',
             'colab': '/content/mnist'
         },
         'scapes': {
             'width': 1280,
             'height': 720,
-            'channels': 'rgb',
+            'color_mode': 'rgb',
             'batch_size': 100,
-            'local': '../data/scapes',
-            'colab': '/content/scapes'
+            'normalization_factor': 1/255,
+            'local': 'data/scapes',
+            'colab': 'content/scapes'
         }
     }
