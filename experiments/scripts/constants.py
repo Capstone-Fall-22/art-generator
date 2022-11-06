@@ -22,6 +22,6 @@ def get_constants():
             'pixel_min': 0,
             'pixel_max': 255,
             'local': 'data/scapes',
-            'colab': 'content/scapes'
+            'colab': '/content/scapes'
         }
     }
