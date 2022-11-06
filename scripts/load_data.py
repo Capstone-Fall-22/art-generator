@@ -1,5 +1,5 @@
 import tensorflow as tf
-from constants import get_constants
+from scripts.constants import get_constants
 
 def load_dataset(name, colab=False):
     constants = get_constants()
