@@ -24,11 +24,16 @@ def build_dcgan(dataset_name):
 
     hidden_convolutional_layers = []
     for i in range(generator_specs['num_hidden_conv_layers']):
+
+        num_filters = generator_specs['initial_num_filters'] // (2**(i + 1))
+        if num_filters < 32:
+            num_filters = 32
+
         layers = [
             Conv2DTranspose(
                 # Input layer has initial_num_filters, each hidden layer has half the
                 # number of filters of the previous hidden layer
-                generator_specs['initial_num_filters'] // (2**(i + 1)), 
+                num_filters, 
                 kernel_size=3, 
                 strides=2,
                 padding='same', 

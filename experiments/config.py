@@ -39,9 +39,18 @@ def get_config(dataset_name):
                 'initial_num_filters': 0
             },
             'dcgan': {
-                'num_hidden_layers': 0,
-                'initial_num_filters': 0
-            },
+                'generator': {
+                    'initial_num_filters': 64,
+                    'num_hidden_conv_layers': 4,
+                    'initial_width': 80,
+                    'initial_height': 45,
+                    'optimizer': Adam(0.0002, 0.5)
+                },
+                'discriminator': {
+                    'initial_num_filters': 128,
+                    'num_hidden_conv_layers':  3,
+                    'optimizer': Adam(0.0002, 0.5)
+                }            },
             'path': {
                 'local': 'data/scapes',
                 'colab': '/content/scapes'
