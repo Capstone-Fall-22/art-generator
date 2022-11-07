@@ -1,74 +1,34 @@
 from silence_tensorflow import silence_tensorflow
 silence_tensorflow()
-from scripts.constants import get_constants
+from config import get_config
 from tensorflow.keras.initializers import RandomNormal
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Input, Dense, Reshape, Conv2DTranspose, BatchNormalization, Conv2D, LeakyReLU, Flatten, UpSampling2D
 
-# Build model
-def get_dcgan_specs(height, width):
-    '''
-    num_hidden_conv_layers:
-        Equal to number of times we can evenly divide the width and height by 2.
-        This is done this way since we use upsampling in each hidden layer which
-        doubles the width and height.
-
-    initial_num_filters 
-        Derived from num_hidden_conv_layers. The goal is to have 128 filters in
-        the last hidden layer. Since we halve the number of filters each time we
-        upsample (as we do in each hidden conv layer) we can calculate the
-        initial number of filters by taking 128 and doubling it for each hidden
-        conv layer.
-    '''
-
-    num_hidden_conv_layers = 0
-    while width > 4 and height > 4:
-        width = width / 2
-        height = height / 2
-        if width.is_integer() and height.is_integer():
-            num_hidden_conv_layers += 1
-        else:
-            break
-    
-    initial_width = width * 2
-    initial_height = height * 2
-
-    initial_num_filters = 128 * (2**num_hidden_conv_layers)
-    
-    specs = {
-        'num_hidden_conv_layers': int(num_hidden_conv_layers),
-        'initial_width': int(initial_width),
-        'initial_height': int(initial_height),
-        'initial_num_filters': int(initial_num_filters)
-    }
-
-
-    return specs
-
 def build_dcgan(dataset_name):
     weight_initializer = RandomNormal(mean=0.0, stddev=0.02, seed=None)
 
-    constants = get_constants()
+    config = get_config(dataset_name)
 
-    specs = get_dcgan_specs(constants[dataset_name]['height'], constants[dataset_name]['width'])
-    print(specs)
+    generator_specs = config['dataset']['dcgan']['generator']
+
     input_layers = [
-        Input(shape=(constants['len_seed'],)),
+        Input(shape=(config['len_seed'],)),
         Dense(
-            specs['initial_width'] * specs['initial_height'] * 3, 
+            generator_specs['initial_width'] * generator_specs['initial_height'] * generator_specs['initial_num_filters'], 
             activation='relu', 
             kernel_initializer=weight_initializer
         ),
-        Reshape((specs['initial_height'], specs['initial_width'], 3))
+        Reshape((generator_specs['initial_height'], generator_specs['initial_width'], generator_specs['initial_num_filters']))
     ]
 
     hidden_convolutional_layers = []
-    for i in range(specs['num_hidden_conv_layers']):
+    for i in range(generator_specs['num_hidden_conv_layers']):
         layers = [
             Conv2DTranspose(
                 # Input layer has initial_num_filters, each hidden layer has half the
                 # number of filters of the previous hidden layer
-                specs['initial_num_filters'] // (2**(i + 1)), 
+                generator_specs['initial_num_filters'] // (2**(i + 1)), 
                 kernel_size=3, 
                 strides=2,
                 padding='same', 
@@ -81,7 +41,7 @@ def build_dcgan(dataset_name):
 
     output_layers = [
         Conv2D(
-            constants[dataset_name]['num_color_channels'], 
+            config['dataset']['num_color_channels'], 
             kernel_size=3, 
             padding='same', 
             activation='tanh', 
@@ -91,18 +51,18 @@ def build_dcgan(dataset_name):
 
     generator = Sequential(input_layers + hidden_convolutional_layers + output_layers)
 
-    initial_num_filters = 128
+    discriminator_specs = config['dataset']['dcgan']['discriminator']
 
     input_layers = [
         Input(
             shape=(
-                constants[dataset_name]['height'], 
-                constants[dataset_name]['width'], 
-                constants[dataset_name]['num_color_channels']
+                config['dataset']['height'], 
+                config['dataset']['width'], 
+                config['dataset']['num_color_channels']
             )
         ),
         Conv2D(
-            initial_num_filters, 
+            discriminator_specs['initial_num_filters'], 
             kernel_size=3, 
             strides=2, 
             padding='same'
@@ -111,13 +71,13 @@ def build_dcgan(dataset_name):
     ]
 
     hidden_layers = []
-    for i in range(specs['num_hidden_conv_layers'] - 1):
+    for i in range(discriminator_specs['num_hidden_conv_layers']):
         layers = [
             Conv2D(
-            initial_num_filters * (2**(i + 1)),
-            kernel_size=3, 
-            strides=2, 
-            padding='same'
+                discriminator_specs['initial_num_filters'] * (2**(i + 1)),
+                kernel_size=3, 
+                strides=2, 
+                padding='same'
             ),
             LeakyReLU(0.2)
         ]
@@ -177,3 +137,12 @@ def build_toy_model(dataset_name):
     ])
 
     return generator, discriminator
+
+def build_model(model_name, dataset_name):
+    if model_name == 'dcgan':
+        return build_dcgan(dataset_name)
+    elif model_name == 'toy_model':
+        return build_toy_model(dataset_name)
+    else:
+        print('Invalid model name')
+        return
