@@ -22,10 +22,11 @@ def generate_and_save_images(model, epoch, test_seeds):
 def train_step(
         models,
         real_image_batch, 
+        batch_size,
         len_seed
     ):
     input_noise_seeds = tf.random.normal([real_image_batch.numpy().shape[0], len_seed])
-
+    
     with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
         generated_image_batch = models['generator']['model'](input_noise_seeds, training=True)
 
@@ -62,7 +63,7 @@ def train(models, dataset, epochs, len_seed, num_test_seeds):
             print(f'Loss for previous batch #{i}: Generator loss = {gen_loss}, Discriminator loss = {disc_loss}')
             print(f'Epoch # {epoch + 1}/{epochs}')
             print(f'Batch # {i + 1}')
-            gen_loss, disc_loss = train_step(models, batch, len_seed)
+            gen_loss, disc_loss = train_step(models, batch, tf.shape(batch)[0], len_seed)
         
         generate_and_save_images(models['generator']['model'], epoch + 1, test_seeds)
 

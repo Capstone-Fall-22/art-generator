@@ -14,7 +14,7 @@ def get_dcgan_specs(height, width):
         doubles the width and height.
 
     initial_num_filters 
-        Derived from num_hidden_conv_layers. The goal is to have 8 filters in
+        Derived from num_hidden_conv_layers. The goal is to have 128 filters in
         the last hidden layer. Since we halve the number of filters each time we
         upsample (as we do in each hidden conv layer) we can calculate the
         initial number of filters by taking 128 and doubling it for each hidden
@@ -33,7 +33,7 @@ def get_dcgan_specs(height, width):
     initial_width = width * 2
     initial_height = height * 2
 
-    initial_num_filters = 8 * (2**num_hidden_conv_layers)
+    initial_num_filters = 128 * (2**num_hidden_conv_layers)
     
     specs = {
         'num_hidden_conv_layers': int(num_hidden_conv_layers),
@@ -55,11 +55,11 @@ def build_dcgan(dataset_name):
     input_layers = [
         Input(shape=(constants['len_seed'],)),
         Dense(
-            specs['initial_width'] * specs['initial_height'] * specs['initial_num_filters'], 
+            specs['initial_width'] * specs['initial_height'] * 3, 
             activation='relu', 
             kernel_initializer=weight_initializer
         ),
-        Reshape((specs['initial_height'], specs['initial_width'], specs['initial_num_filters']))
+        Reshape((specs['initial_height'], specs['initial_width'], 3))
     ]
 
     hidden_convolutional_layers = []
