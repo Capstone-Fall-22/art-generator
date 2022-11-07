@@ -25,7 +25,7 @@ def train_step(
         batch_size,
         len_seed
     ):
-    input_noise_seeds = tf.random.normal([real_image_batch.numpy().shape[0], len_seed])
+    input_noise_seeds = tf.random.normal([batch_size, len_seed])
     
     with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
         generated_image_batch = models['generator']['model'](input_noise_seeds, training=True)
