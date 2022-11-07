@@ -64,6 +64,7 @@ def train(models, dataset, epochs, len_seed, num_test_seeds):
             print(f'Epoch # {epoch + 1}/{epochs}')
             print(f'Batch # {i + 1}')
             gen_loss, disc_loss = train_step(models, batch, tf.shape(batch)[0], len_seed)
+            tf.keras.backend.clear_session()
         
         generate_and_save_images(models['generator']['model'], epoch + 1, test_seeds)
 
