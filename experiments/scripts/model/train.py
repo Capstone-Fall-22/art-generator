@@ -38,13 +38,13 @@ def train_step(
 
         print(f'Generator loss: {gen_loss}, Discriminator loss: {disc_loss}', end='\r')
 
-        generator_gradient = gen_tape.gradient(gen_loss, models['generator']['model'].trainable_variables)
-        discriminator_gradient = disc_tape.gradient(disc_loss, models['discriminator']['model'].trainable_variables)
+    generator_gradient = gen_tape.gradient(gen_loss, models['generator']['model'].trainable_variables)
+    discriminator_gradient = disc_tape.gradient(disc_loss, models['discriminator']['model'].trainable_variables)
 
-        models['generator']['optimizer'].apply_gradients(zip(generator_gradient, models['generator']['model'].trainable_variables))
-        models['discriminator']['optimizer'].apply_gradients(zip(discriminator_gradient, models['discriminator']['model'].trainable_variables))
+    models['generator']['optimizer'].apply_gradients(zip(generator_gradient, models['generator']['model'].trainable_variables))
+    models['discriminator']['optimizer'].apply_gradients(zip(discriminator_gradient, models['discriminator']['model'].trainable_variables))
 
-        return gen_loss, disc_loss
+    return gen_loss, disc_loss
 
 def train(models, dataset, epochs, len_seed, num_test_seeds):
 
