@@ -18,7 +18,7 @@ def get_constants():
             'height': 720,
             'color_mode': 'rgb',
             'num_color_channels': 3,
-            'batch_size': 4,
+            'batch_size': 8,
             'pixel_min': 0,
             'pixel_max': 255,
             'local': 'data/scapes',
