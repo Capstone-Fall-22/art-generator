@@ -18,7 +18,7 @@ def generate_and_save_images(model, epoch, test_seeds):
     plt.savefig('image_at_epoch_{:04d}.png'.format(epoch))
     plt.show()
 
-# @tf.function
+@tf.function
 def train_step(
         models,
         real_image_batch, 
