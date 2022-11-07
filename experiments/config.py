@@ -50,7 +50,8 @@ def get_config(dataset_name):
                     'initial_num_filters': 128,
                     'num_hidden_conv_layers':  3,
                     'optimizer': Adam(0.0002, 0.5)
-                }            },
+                }            
+            },
             'path': {
                 'local': 'data/scapes',
                 'colab': '/content/scapes'
