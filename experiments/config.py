@@ -40,14 +40,14 @@ def get_config(dataset_name):
             },
             'dcgan': {
                 'generator': {
-                    'initial_num_filters': 64,
-                    'num_hidden_conv_layers': 4,
-                    'initial_width': 80,
-                    'initial_height': 45,
+                    'initial_num_filters': 512,
+                    'num_hidden_conv_layers': 8,
+                    'initial_width': 5,
+                    'initial_height': 5,
                     'optimizer': Adam(0.0002, 0.5)
                 },
                 'discriminator': {
-                    'initial_num_filters': 128,
+                    'initial_num_filters': 64,
                     'num_hidden_conv_layers':  3,
                     'optimizer': Adam(0.0002, 0.5)
                 }            
@@ -56,11 +56,11 @@ def get_config(dataset_name):
                 'local': 'data/scapes',
                 'colab': '/content/scapes'
             },
-            'batch_size': 16,
-            'width': 1280,
+            'batch_size': 10,
             'height': 720,
-            'color_mode': 'rgb',
+            'width': 1280,
             'num_color_channels': 3,
+            'color_mode': 'rgb',
             'pixel_min': 0,
             'pixel_max': 255,
         }

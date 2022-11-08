@@ -3,7 +3,7 @@ silence_tensorflow()
 from config import get_config
 from tensorflow.keras.initializers import RandomNormal
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Input, Dense, Reshape, Conv2DTranspose, BatchNormalization, Conv2D, LeakyReLU, Flatten, UpSampling2D
+from tensorflow.keras.layers import Input, Dense, Reshape, Conv2DTranspose, BatchNormalization, Conv2D, LeakyReLU, Flatten, UpSampling2D, Resizing
 
 def build_dcgan(dataset_name):
     weight_initializer = RandomNormal(mean=0.0, stddev=0.02, seed=None)
@@ -45,6 +45,10 @@ def build_dcgan(dataset_name):
         hidden_convolutional_layers.extend(layers)
 
     output_layers = [
+        Resizing(
+            config['dataset']['height'],
+            config['dataset']['width']
+        ),
         Conv2D(
             config['dataset']['num_color_channels'], 
             kernel_size=3, 
