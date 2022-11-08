@@ -40,14 +40,14 @@ def get_config(dataset_name):
             },
             'dcgan': {
                 'generator': {
-                    'initial_num_filters': 512,
-                    'num_hidden_conv_layers': 8,
-                    'initial_width': 5,
-                    'initial_height': 5,
+                    'initial_num_filters': 1024,
+                    'num_hidden_conv_layers': 7,
+                    'initial_width': 10,
+                    'initial_height': 10,
                     'optimizer': Adam(0.0002, 0.5)
                 },
                 'discriminator': {
-                    'initial_num_filters': 64,
+                    'initial_num_filters': 128,
                     'num_hidden_conv_layers':  3,
                     'optimizer': Adam(0.0002, 0.5)
                 }            
