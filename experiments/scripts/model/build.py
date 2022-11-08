@@ -5,7 +5,7 @@ from tensorflow.keras.initializers import RandomNormal
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Input, Dense, Reshape, Conv2DTranspose, BatchNormalization, Conv2D, LeakyReLU, Flatten, UpSampling2D, Resizing
 
-def build_dcgan(dataset_name):
+def build_dcgan(dataset_name, double_up=False):
     weight_initializer = RandomNormal(mean=0.0, stddev=0.02, seed=None)
 
     config = get_config(dataset_name)
@@ -13,12 +13,9 @@ def build_dcgan(dataset_name):
     generator_specs = config['dataset']['dcgan']['generator']
 
     input_layers = [
-        Input(shape=(config['len_seed'],)),
-        Dense(
-            generator_specs['initial_width'] * generator_specs['initial_height'] * generator_specs['initial_num_filters'], 
-            activation='relu', 
-            kernel_initializer=weight_initializer
-        ),
+        Dense(generator_specs['initial_height'] * generator_specs['initial_width'] * generator_specs['initial_num_filters'], input_shape=(generator_specs['len_seed'],)),
+        BatchNormalization(),
+        LeakyReLU(alpha=0),
         Reshape((generator_specs['initial_height'], generator_specs['initial_width'], generator_specs['initial_num_filters']))
     ]
 
@@ -34,29 +31,37 @@ def build_dcgan(dataset_name):
                 # Input layer has initial_num_filters, each hidden layer has half the
                 # number of filters of the previous hidden layer
                 num_filters, 
-                kernel_size=3, 
+                kernel_size=5, 
                 strides=2,
                 padding='same', 
                 activation='relu', 
                 kernel_initializer=weight_initializer
             ),
-            BatchNormalization(momentum=0.8)
+            BatchNormalization()
         ]
         hidden_convolutional_layers.extend(layers)
 
-    output_layers = [
-        Resizing(
-            config['dataset']['height'],
-            config['dataset']['width']
-        ),
+    image_width_before_output = generator_specs['initial_width'] * (2 ** generator_specs['num_hidden_conv_layers'])
+    image_height_before_output = generator_specs['initial_height'] * (2 ** generator_specs['num_hidden_conv_layers'])
+
+    output_layers = []
+    if image_width_before_output > config['dataset']['width'] or image_height_before_output > config['dataset']['height']:
+        output_layers.extend([
+            Resizing(
+                config['dataset']['height'],
+                config['dataset']['width']
+            )
+        ])
+
+    output_layers.extend([
         Conv2D(
             config['dataset']['num_color_channels'], 
-            kernel_size=3, 
+            kernel_size=5, 
             padding='same', 
             activation='tanh', 
             kernel_initializer=weight_initializer
         )
-    ]
+    ])
 
     generator = Sequential(input_layers + hidden_convolutional_layers + output_layers)
 
@@ -69,22 +74,15 @@ def build_dcgan(dataset_name):
                 config['dataset']['width'], 
                 config['dataset']['num_color_channels']
             )
-        ),
-        Conv2D(
-            discriminator_specs['initial_num_filters'], 
-            kernel_size=3, 
-            strides=2, 
-            padding='same'
-        ),
-        LeakyReLU(0.2),
+        )
     ]
 
     hidden_layers = []
     for i in range(discriminator_specs['num_hidden_conv_layers']):
         layers = [
             Conv2D(
-                discriminator_specs['initial_num_filters'] * (2**(i + 1)),
-                kernel_size=3, 
+                discriminator_specs['initial_num_filters'] * (2**i),
+                kernel_size=5, 
                 strides=2, 
                 padding='same'
             ),

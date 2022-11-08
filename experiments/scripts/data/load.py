@@ -9,6 +9,7 @@ def load_dataset(
         normalize=False,
         batch=False, 
         prefetch=False,
+        cast_to_int8=True,
         colab=False
     ):
     config = get_config(dataset_name)
@@ -33,6 +34,9 @@ def load_dataset(
         # Rescale to [-1, 1]
         dataset = dataset.map(lambda x: (x - normalization_factor)/normalization_factor)
 
+    if cast_to_int8:
+        dataset = dataset.map(lambda x: tf.cast(x, tf.int8))
+
     if batch:
         dataset = dataset.batch(
             config['dataset']['batch_size'],
@@ -41,5 +45,6 @@ def load_dataset(
 
     if prefetch:
         dataset = dataset.prefetch(tf.data.AUTOTUNE)
+
 
     return dataset

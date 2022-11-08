@@ -9,15 +9,16 @@ def get_config(dataset_name):
             },
             'dcgan': {
                 'generator': {
-                    'initial_num_filters': 128,
+                    'initial_num_filters': 256,
                     'num_hidden_conv_layers': 2,
                     'initial_width': 7,
                     'initial_height': 7,
+                    'len_seed': 7 * 7 * 64,
                     'optimizer': Adam(0.0002, 0.5)
                 },
                 'discriminator': {
                     'initial_num_filters': 128,
-                    'num_hidden_conv_layers':  1,
+                    'num_hidden_conv_layers':  2,
                     'optimizer': Adam(0.0002, 0.5)
                 }
             },
@@ -25,7 +26,7 @@ def get_config(dataset_name):
                 'local': 'data/mnist',
                 'colab': '/content/mnist'
             },
-            'batch_size': 100,
+            'batch_size': 256,
             'width': 28,
             'height': 28,
             'color_mode': 'grayscale',
@@ -44,6 +45,7 @@ def get_config(dataset_name):
                     'num_hidden_conv_layers': 7,
                     'initial_width': 10,
                     'initial_height': 10,
+                    'len_seed': 10 * 10,
                     'optimizer': Adam(0.0002, 0.5)
                 },
                 'discriminator': {
@@ -67,7 +69,6 @@ def get_config(dataset_name):
     }
 
     config = {
-        'len_seed': 100,
         'random_seed': 42,
         'dataset': dataset_configs[dataset_name]
     }
