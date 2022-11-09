@@ -3,3 +3,5 @@ env
 experiments/data
 **/__pycache__/*
 .DS_STORE
+example_images/
+experiments/models/

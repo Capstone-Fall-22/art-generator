@@ -3,9 +3,9 @@ silence_tensorflow()
 from config import get_config
 from tensorflow.keras.initializers import RandomNormal
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Input, Dense, Reshape, Conv2DTranspose, BatchNormalization, Conv2D, LeakyReLU, Flatten, UpSampling2D, Resizing
+from tensorflow.keras.layers import Input, Dense, Reshape, Conv2DTranspose, BatchNormalization, Conv2D, LeakyReLU, Flatten, UpSampling2D, Resizing, Dropout
 
-def build_dcgan(dataset_name, double_up=False):
+def build_dcgan(dataset_name):
     weight_initializer = RandomNormal(mean=0.0, stddev=0.02, seed=None)
 
     config = get_config(dataset_name)
@@ -23,8 +23,8 @@ def build_dcgan(dataset_name, double_up=False):
     for i in range(generator_specs['num_hidden_conv_layers']):
 
         num_filters = generator_specs['initial_num_filters'] // (2**(i + 1))
-        if num_filters < 32:
-            num_filters = 32
+        if num_filters < 64:
+            num_filters = 64
 
         layers = [
             Conv2DTranspose(
@@ -39,6 +39,19 @@ def build_dcgan(dataset_name, double_up=False):
             ),
             BatchNormalization()
         ]
+
+        if generator_specs['double_conv']:
+            layers.extend([
+                Conv2D(
+                    num_filters,
+                    kernel_size=5,
+                    strides=1,
+                    padding='same',
+                    activation='relu',
+                    kernel_initializer=weight_initializer
+                ),
+                BatchNormalization()
+            ])
         hidden_convolutional_layers.extend(layers)
 
     image_width_before_output = generator_specs['initial_width'] * (2 ** generator_specs['num_hidden_conv_layers'])
@@ -86,7 +99,8 @@ def build_dcgan(dataset_name, double_up=False):
                 strides=2, 
                 padding='same'
             ),
-            LeakyReLU(0.2)
+            LeakyReLU(0.2),
+            Dropout(0.3)
         ]
         hidden_layers.extend(layers)
 
