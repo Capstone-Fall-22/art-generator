@@ -51,11 +51,14 @@ def train_step(config, real_image_batch):
 
 def train(config):
     gc.collect()
+    output_dir = f"/content/{config['output_dir']}" if config["colab"] else config['output_dir']
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
     # if experiment folder exists, delete it and create a new one
-    if os.path.exists(f"{config['output_dir']}/{config['experiment_name']}"):
-        shutil.rmtree(f"{config['output_dir']}/{config['experiment_name']}")
-    os.mkdir(f"{config['output_dir']}/{config['experiment_name']}")
-    os.mkdir(os.path.join(f"{config['output_dir']}/{config['experiment_name']}", "images"))
+    if os.path.exists(f"{output_dir}/{config['experiment_name']}"):
+        shutil.rmtree(f"{output_dir}/{config['experiment_name']}")
+    os.mkdir(f"{output_dir}/{config['experiment_name']}")
+    os.mkdir(os.path.join(f"{output_dir}/{config['experiment_name']}", "images"))
 
     if config["num_examples_to_generate"] < 1:
         print('Number of examples to generate invalid (must be > 0)')
@@ -75,9 +78,9 @@ def train(config):
             gc.collect()
             gen_loss, disc_loss = train_step(config, batch)
         
-        generate_and_save_images(config["generator"], epoch + 1, test_seeds, os.path.join(config['output_dir'], config["experiment_name"]))
-        config["generator"].save(os.path.join(config['output_dir'], config["experiment_name"], f"generator_epoch_{epoch + 1}"))
-        config["discriminator"].save(os.path.join(config['output_dir'], config["experiment_name"], f"discriminator_epoch_{epoch + 1}"))
+        generate_and_save_images(config["generator"], epoch + 1, test_seeds, os.path.join(output_dir, config["experiment_name"]))
+        config["generator"].save(os.path.join(output_dir, config["experiment_name"], f"generator_epoch_{epoch + 1}"))
+        config["discriminator"].save(os.path.join(output_dir, config["experiment_name"], f"discriminator_epoch_{epoch + 1}"))
 
 
         print(f'Time for epoch {epoch + 1} is {time.time()-start} sec')

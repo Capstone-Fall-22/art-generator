@@ -7,7 +7,7 @@
     "pixel_max": 255,
     "normalize": true,
     "batch": true,
-    "batch_size": 1,
+    "batch_size": 8,
     "random_seed": 42,
     "path": {
         "local": "/home/chen/big_bertha/coding/capstone/art-generator/experiments/data/scapes",

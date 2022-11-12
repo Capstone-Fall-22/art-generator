@@ -33,21 +33,14 @@ def run_experiment(dataset_name, model_name, experiment_name, num_examples_to_ge
         "num_examples_to_generate": 1,
         "batch_size": dataset_config["batch_size"],
         "len_seed": model_config["generator"]["input_layer"]["len_seed"],
+        "colab": colab
     }
 
-
-
     train(train_config)
-    # print(generator.summary())
-    # print(discriminator.summary())
-    # print(gen_optimizer, disc_optimizer)
-    # model_config = load_config(config_name=model_name, config_type='model')
-    # model name will be, for example, 'scapes_dcgan'
 
-    # Use experiment name to create a directory for the experiment
-    # Use dataset and model config to build model and load dataset
-    # Train model
-    # At each epoch save model + sample images (16-32) of the same seed
-    return generator
+    return generator, discriminator
 
-# run_experiment(dataset_name="scapes", model_name="dcgan_scapes", experiment_name="test")
+
+
+# TODO Implement this
+# def continue_experiment(dataset_name, model_path, experiment_name, num_examples_to_generate=1, epochs=10, colab=False)
