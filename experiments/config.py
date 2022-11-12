@@ -1,6 +1,8 @@
 from tensorflow.keras.optimizers import Adam
 
-def get_config(dataset_name):
+def get_config(dataset_name=None, model_name=None):
+    if dataset_name:
+        return 
     dataset_configs = {
         'mnist': {
             'toy_model': {
@@ -14,27 +16,16 @@ def get_config(dataset_name):
                     'initial_width': 7,
                     'initial_height': 7,
                     'len_seed': 7 * 7,
-                    'optimizer': Adam(0.00002, 0.5),
+                    'optimizer': Adam(0.0002, 0.5),
                     'double_conv': False
                 },
                 'discriminator': {
                     'initial_num_filters': 128,
                     'num_hidden_conv_layers':  2,
-                    'optimizer': Adam(0.00002, 0.5)
+                    'optimizer': Adam(0.0002, 0.5)
                 }
             },
-            'path': {
-                'local': 'data/mnist',
-                'colab': '/content/mnist'
-            },
-            'batch_size': 512,
-            'width': 28,
-            'height': 28,
-            'color_mode': 'grayscale',
-            'num_color_channels': 1,
-            'pixel_min': 0,
-            'pixel_max': 255,
-        },
+
         'scapes': {
             'toy_model': {
                 'num_hidden_layers': 0,
@@ -46,9 +37,11 @@ def get_config(dataset_name):
                     'num_hidden_conv_layers': 7,
                     'initial_width': 10,
                     'initial_height': 10,
-                    'len_seed': 10 * 10,
+                    'len_seed': 100,
                     'optimizer': Adam(0.0002, 0.5),
-                    'double_conv': False # Double conv appears to hurt performance
+                    'double_conv': False, # Double conv appears to hurt performance
+                    'filter_halving_occurance': 2, # How many conv layers to have before halving the number of filters
+                    'minimum_num_filters': 64
                 },
                 'discriminator': {
                     'initial_num_filters': 128,
@@ -56,17 +49,8 @@ def get_config(dataset_name):
                     'optimizer': Adam(0.0002, 0.5)
                 }            
             },
-            'path': {
-                'local': 'data/scapes',
-                'colab': '/content/scapes'
-            },
-            'batch_size': 10,
-            'height': 720,
-            'width': 1280,
-            'num_color_channels': 3,
-            'color_mode': 'rgb',
-            'pixel_min': 0,
-            'pixel_max': 255,
+            
+
         }
     }
 

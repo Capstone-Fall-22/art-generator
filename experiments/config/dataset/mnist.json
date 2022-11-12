@@ -1,0 +1,13 @@
+{
+    "batch_size": 512,
+    "width": 28,
+    "height": 28,
+    "color_mode": "grayscale",
+    "num_color_channels": 1,
+    "pixel_min": 0,
+    "pixel_max": 255,
+    "path": {
+        "local": "data/mnist",
+        "colab": "/content/mnist"
+    }
+}

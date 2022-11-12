@@ -1,50 +1,34 @@
 from silence_tensorflow import silence_tensorflow
+
 silence_tensorflow()
 import tensorflow as tf
-from tensorflow.keras.layers import Rescaling, Subtract, Normalization
-from config import get_config
 
-def load_dataset(
-        dataset_name, 
-        normalize=False,
-        batch=False, 
-        prefetch=False,
-        cast_to_int8=True,
-        colab=False
-    ):
-    config = get_config(dataset_name)
-    dataset_path = config['dataset']['path']['colab'] if colab else config['dataset']['path']['local']
-    
+
+def load_dataset(config, colab=False):
+    path_location = "colab" if colab else "local"
+
     dataset = tf.keras.utils.image_dataset_from_directory(
-        directory=dataset_path, 
-        labels=None, 
-        color_mode=config['dataset']['color_mode'], 
-        image_size=(config['dataset']['height'], config['dataset']['width']), 
+        directory=config["path"][path_location],
+        labels=None,
+        color_mode=config["color_mode"],
+        image_size=(config["height"], config["width"]),
         batch_size=None,
-        shuffle=True, 
-        seed=config['random_seed'], 
-        validation_split=None, 
-        subset=None, 
-        interpolation='bilinear', 
-        follow_links=False
+        shuffle=True,
+        seed=config["random_seed"],
+        validation_split=None,
+        subset=None,
+        interpolation="bilinear",
+        follow_links=False,
     )
 
-    if normalize:
-        normalization_factor = (config['dataset']['pixel_max'] + config['dataset']['pixel_min']) / 2
+    if config["normalize"]:
+        normalization_factor = (config["pixel_max"] + config["pixel_min"]) / 2
         # Rescale to [-1, 1]
-        dataset = dataset.map(lambda x: (x - normalization_factor)/normalization_factor)
-
-    if cast_to_int8:
-        dataset = dataset.map(lambda x: tf.cast(x, tf.int8))
-
-    if batch:
-        dataset = dataset.batch(
-            config['dataset']['batch_size'],
-            drop_remainder=True
+        dataset = dataset.map(
+            lambda x: (x - normalization_factor) / normalization_factor
         )
 
-    if prefetch:
-        dataset = dataset.prefetch(tf.data.AUTOTUNE)
-
+    if config["batch"]:
+        dataset = dataset.batch(config["batch_size"], drop_remainder=True)
 
     return dataset

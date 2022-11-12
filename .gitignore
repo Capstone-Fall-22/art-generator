@@ -1,6 +1,8 @@
 .env
 env
+.vscode
 experiments/data
+experiments/results
 **/__pycache__/*
 .DS_STORE
 example_images/
