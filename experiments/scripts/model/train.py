@@ -12,14 +12,16 @@ def generate_and_save_images(model, epoch, test_seeds, output_dir):
     # Notice `training` is set to False.
     # This is so all layers run in inference mode (batchnorm).
     predictions = model(test_seeds, training=False)
-    predictions = predictions.numpy()
+    predictions = predictions.numpy().astype("float32")
+    print(np.average(predictions[0]), np.max(predictions[0]), np.min(predictions[0]))
     fig = plt.figure(figsize=(4, 4))
     logger = logging.getLogger()
     old_level = logger.level
     logger.setLevel(100)
     for i, image in enumerate(predictions):
         image = ((image - np.min(image)) * 255) / (np.max(image) - np.min(image))
-        # print(np.average(image), np.max(image), np.min(image))
+        image = image.astype("uint8")
+        print(np.average(image), np.max(image), np.min(image))
         plt.subplot(4, 4, i+1)
         plt.imshow(image)
         plt.axis('off')  
