@@ -13,6 +13,6 @@
     "random_seed": 42,
     "path": {
         "local": "/home/chen/big_bertha/coding/capstone/art-generator/experiments/data/scapes_640_320_cropped_zero_pad_limit_0_5",
-        "colab": "/content/scapes"
+        "colab": "/content/scapes_640_320_cropped_zero_pad_limit_0_5"
     }
 }
