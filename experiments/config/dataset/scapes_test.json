@@ -9,6 +9,7 @@
     "batch": true,
     "batch_size": 1,
     "prefetch": 1,
+    "shuffle": false,
     "random_seed": 42,
     "path": {
         "local": "/home/chen/big_bertha/coding/capstone/art-generator/experiments/data/scapes_test",

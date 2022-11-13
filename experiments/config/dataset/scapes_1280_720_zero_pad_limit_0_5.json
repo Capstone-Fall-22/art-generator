@@ -12,7 +12,7 @@
     "shuffle": false,
     "random_seed": 42,
     "path": {
-        "local": "/home/chen/big_bertha/coding/capstone/art-generator/experiments/data/scapes",
+        "local": "/home/chen/big_bertha/coding/capstone/art-generator/experiments/data/scapes_1280_720_zero_pad_limit_0_5",
         "colab": "/content/scapes"
     }
 }
