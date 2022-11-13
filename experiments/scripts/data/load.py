@@ -31,4 +31,7 @@ def load_dataset(config, colab=False):
     if config["batch"]:
         dataset = dataset.batch(config["batch_size"], drop_remainder=True)
 
+    if config["prefetch"]:
+        dataset = dataset.prefetch(config["prefetch"])
+
     return dataset
