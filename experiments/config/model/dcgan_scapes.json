@@ -12,7 +12,7 @@
             "upsample": false,
             "deconvolution": true,
             "stride": 2,
-            "filter_counts": [512, 512, 512, 512, 256, 128, 64],
+            "filter_counts": [512, 512, 512, 512, 512, 512, 512],
             "kernel_sizes": [5, 5, 5, 5, 5, 5, 5],
             "batch_norm": true,
             "relu_negative_slope": 0,
