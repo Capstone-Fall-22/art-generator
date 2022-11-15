@@ -30,7 +30,7 @@ def run_experiment(dataset_name, model_name, experiment_name, num_examples_to_ge
         "discriminator": discriminator,
         "gen_optimizer": gen_optimizer,
         "disc_optimizer": disc_optimizer,
-        "num_examples_to_generate": 1,
+        "num_examples_to_generate": num_examples_to_generate,
         "batch_size": dataset_config["batch_size"],
         "len_seed": model_config["generator"]["input_layer"]["len_seed"],
         "colab": colab
