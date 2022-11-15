@@ -1,10 +1,10 @@
 {
     "generator": {
         "input_layer": {
-            "len_seed": 100,
-            "height": 10,
-            "width": 10,
-            "num_filters": 1024,
+            "len_seed": 50,
+            "height": 5,
+            "width": 5,
+            "num_filters": 512,
             "batch_norm": true,
             "relu_negative_slope": 0
         },
@@ -12,8 +12,8 @@
             "upsample": false,
             "deconvolution": true,
             "stride": 2,
-            "filter_counts": [512, 512, 512, 512, 512, 512],
-            "kernel_sizes": [5, 5, 5, 5, 5, 5],
+            "filter_counts": [512, 256, 128, 64, 64, 64, 32],
+            "kernel_sizes": [3, 3, 3, 3, 3, 3, 3],
             "batch_norm": true,
             "relu_negative_slope": 0,
             "weight_init": true,
@@ -24,7 +24,7 @@
             "height": 360,
             "width": 640,
             "num_color_channels": 3,
-            "kernel_size": 5,
+            "kernel_size": 3,
             "activation": "tanh"
         },
         "optimizer": {
@@ -41,7 +41,7 @@
         },
         "hidden_layers": {
             "filter_counts": [64, 128, 256],
-            "kernel_sizes": [5, 5, 5],
+            "kernel_sizes": [3, 3, 3],
             "strides": [2, 2, 2],
             "dropout": 0.3,
             "relu_negative_slope": 0.2

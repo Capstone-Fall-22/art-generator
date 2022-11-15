@@ -184,3 +184,8 @@ def load_model(config):
     discriminator = build_discriminator(config["discriminator"])
     # print(generator.summary(), discriminator.summary())
     return generator, discriminator
+
+def get_architecture(config):
+    generator = build_generator(config["generator"])
+    discriminator = build_discriminator(config["discriminator"])
+    return generator.summary(), discriminator.summary()
