@@ -21,7 +21,7 @@ def generate_and_save_images(model, epoch, test_seeds, output_dir):
     for i, image in enumerate(predictions):
         image = ((image - np.min(image)) * 255) / (np.max(image) - np.min(image))
         image = image.astype("uint8")
-        print(np.average(image), np.max(image), np.min(image))
+        # print(np.average(image), np.max(image), np.min(image))
         plt.subplot(4, 4, i+1)
         plt.imshow(image)
         plt.axis('off')  

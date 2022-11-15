@@ -1,7 +1,12 @@
-import os, sys
+import os, sys, json, pathlib
 import cv2
 from concurrent.futures import ThreadPoolExecutor
-from resize_config import get_resize_config
+
+def load_config():
+    config = json.load(open(os.path.join(pathlib.Path(__file__).parent.resolve(), "resize_config.json")))
+    config["input_path"] = os.path.join(pathlib.Path(__file__).parent.parent.parent.resolve(), "experiments", "data", config["input_dir"])
+    config["output_path"] = os.path.join(pathlib.Path(__file__).parent.parent.parent.resolve(), "experiments", "data", config["output_dir"])
+    return config
 
 
 def scale_image(image, width, height, rescale_factor):
@@ -33,6 +38,8 @@ def scale_image(image, width, height, rescale_factor):
 
         # Reverse the last resize
         image = cv2.resize(image, (0, 0), fx=1 + rescale_factor, fy=1 + rescale_factor)
+
+    image = image[:height, :width]
 
     return image
 
@@ -104,8 +111,11 @@ def get_resize_image_args(config):
             if image == "attributions.json":
                 continue
             image_path = os.path.join(category_dir, image)
+            
             # Save images as PNG for lossless compression
-            image = ".".join(image.split(".")[:-1]) + ".png"
+            if config["png"]:
+                image = ".".join(image.split(".")[:-1]) + ".png"
+
             output_image_path = os.path.join(config["output_path"], category, image)
             args.append(
                 (
@@ -132,26 +142,28 @@ def check_image_size(image_path, width, height):
         # print('Invalid image: {}'.format(image_path))
         invalid_image_count += 1
 
-
+ 
 if __name__ == "__main__":
-    config = get_resize_config()
-    # prepare_output_dirs(config)
-    # resize_image_args = get_resize_image_args(config)
-    # with ThreadPoolExecutor() as executor:
-    #     # We unpack the arguments here because the zip function expects a comma separated list of arguments
-    #     # We unpack the result of the zip function because the map function expects a comma separated list of arguments
-    #     # e.g. map(func, (arg1, arg2), (arg1, arg2)) and zip((arg1, arg1), (arg2, arg2))
-    #     _ = executor.map(resize_image, *zip(*resize_image_args))
+    config = load_config()
+    prepare_output_dirs(config)
+    resize_image_args = get_resize_image_args(config)
+    with ThreadPoolExecutor() as executor:
+        # We unpack the arguments here because the zip function expects a comma separated list of arguments
+        # We unpack the result of the zip function because the map function expects a comma separated list of arguments
+        # e.g. map(func, (arg1, arg2), (arg1, arg2)) and zip((arg1, arg1), (arg2, arg2))
+        _ = executor.map(resize_image, *zip(*resize_image_args))
+
+    
 
     check_image_size_args = []
     for category in os.listdir(config["output_path"]):
         category_dir = os.path.join(config["output_path"], category)
         for image in os.listdir(category_dir):
-            check_image_size_args.append(
+            check_image_size_args.append( 
                 (os.path.join(category_dir, image), config["width"], config["height"])
             )
 
     with ThreadPoolExecutor() as executor:
-        executor.map(check_image_size, *zip(*check_image_size_args))
+        _ = executor.map(check_image_size, *zip(*check_image_size_args))
 
     print("Found {} invalid images".format(invalid_image_count))

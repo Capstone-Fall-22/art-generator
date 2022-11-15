@@ -1,6 +1,6 @@
 {
-    "height": 640,
-    "width": 320,
+    "height": 360,
+    "width": 640,
     "num_color_channels": 3,
     "color_mode": "rgb",
     "pixel_min": 0,
@@ -12,7 +12,7 @@
     "shuffle": false,
     "random_seed": 42,
     "path": {
-        "local": "/home/chen/big_bertha/coding/capstone/art-generator/experiments/data/scapes_640_320_cropped_zero_pad_limit_0_5",
-        "colab": "/content/scapes_640_320_cropped_zero_pad_limit_0_5"
+        "local": "/home/chen/big_bertha/coding/capstone/art-generator/experiments/data/mini_scapes",
+        "colab": "/content/mini_scapes"
     }
 }
