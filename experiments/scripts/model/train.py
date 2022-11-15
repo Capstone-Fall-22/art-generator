@@ -43,8 +43,6 @@ def train_step(config, real_image_batch):
         gen_loss = generator_loss(y_pred_fake)
         disc_loss = discriminator_loss(y_pred_real, y_pred_fake)
 
-    return
-
     generator_gradient = gen_tape.gradient(gen_loss, config["generator"].trainable_variables)
     discriminator_gradient = disc_tape.gradient(disc_loss, config["discriminator"].trainable_variables)
 
