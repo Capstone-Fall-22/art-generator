@@ -1,6 +1,6 @@
 import  time, gc, os, shutil
 import tensorflow as tf
-# tf.config.run_functions_eagerly(True)
+tf.config.run_functions_eagerly(True)
 import matplotlib.pyplot as plt
 from IPython import display
 from scripts.model.loss import generator_loss, discriminator_loss
