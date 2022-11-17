@@ -40,9 +40,9 @@
             "num_color_channels": 3
         },
         "hidden_layers": {
-            "filter_counts": [64, 128, 256, 512],
-            "kernel_sizes": [3, 3, 3, 3],
-            "strides": [2, 2, 2, 2],
+            "filter_counts": [64, 128, 256, 512, 1024, 2048],
+            "kernel_sizes": [3, 3, 3, 3, 3, 3],
+            "strides": [2, 2, 2, 2, 2, 2],
             "dropout": 0.3,
             "relu_negative_slope": 0.2
         },
