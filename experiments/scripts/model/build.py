@@ -76,6 +76,8 @@ def build_generator(config):
                     ),
                 ]
             )
+            if hidden_config["batch_norm"]:
+                hidden_layers.append(BatchNormalization())
             current_image_shape = [dimension * 2 for dimension in current_image_shape]
     if hidden_config["deconvolution"]:
         for i in range(len(hidden_config["filter_counts"])):
