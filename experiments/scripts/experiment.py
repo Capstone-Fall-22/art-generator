@@ -54,7 +54,6 @@ def continue_experiment(dataset_name, model_name, generator_path, discriminator_
     generator = tf.keras.models.load_model(generator_path)
     discriminator = tf.keras.models.load_model(discriminator_path)
 
-    generator, discriminator = load_model(model_config)
     gen_optimizer, disc_optimizer = load_optimizers(model_config)
 
     train_config = {
