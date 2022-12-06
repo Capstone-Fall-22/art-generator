@@ -1,9 +1,9 @@
 {
-        "input_dir": "full_sized_scapes",
-        "output_dir": "mini_scapes",
-        "height": 360,
-        "width": 640,
-        "resize_factor": 0.05,
+        "input_dir": "mnist",
+        "output_dir": "mini_mnist",
+        "height": 14,
+        "width": 14,
+        "resize_factor": 0.5,
         "zero_pad_limit": 0.5,
         "crop": false,
         "png": false
