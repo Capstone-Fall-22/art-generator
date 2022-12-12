@@ -1,6 +1,18 @@
 from tensorflow.keras.optimizers import Adam, Adamax, Nadam
 
 
+'''
+Loads the optimizer specified in the config file for the generator and discriminator.
+Affects the stability of the model's training
+
+Options:
+    (Most commonly used)
+    - Adam
+    
+    (Derived from Adam)
+    - Adamax
+    - Nadam
+'''
 def load_optimizers(config):
     optimizer = None
     if config["generator"]["optimizer"]["name"] == "adam":

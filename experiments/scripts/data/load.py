@@ -3,7 +3,15 @@ from silence_tensorflow import silence_tensorflow
 silence_tensorflow()
 import tensorflow as tf
 
+'''
+Loaded the dataset using tensorflow's image_dataset_from_directory based on the experiment configuration.
+Once the data is loaded, it gets preprocessed based on the config.
+    - Normalization: Rescales pixels values to [-1, 1]
+    - Batch: Trains the model in batches of examples, instead of one at a time or all of them at once
+    - Prefetch: Prepares the next batch while the current batch is being processed by the model
 
+The colab argument determines where we look for the dataset, defined in the config.
+'''
 def load_dataset(config, colab=False):
     path_location = "colab" if colab else "local"
 

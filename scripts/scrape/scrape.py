@@ -3,12 +3,16 @@ from bs4 import BeautifulSoup
 
 WIKIMEDIA_URL = "https://commons.wikimedia.org"
 
-
+'''
+Transforms the HTML into a BeautifulSoup instance that allows us to easily process HTML
+'''
 def get_soup(link: str, parser: str = "lxml"):
     html = requests.get(link).text
     return BeautifulSoup(html, parser)
 
-
+'''
+Wikimedia uses a paginated setup, this functions retrieves the "next" link so we can travese all pages
+'''
 def get_navigation_links(
     initial_link: str, link_text: str, link_prefix: str = ""
 ) -> list:
@@ -29,7 +33,9 @@ def get_navigation_links(
 
     return links
 
-
+'''
+Using the navigation links, we go to each page in a category and retrieve the links to the image pages
+'''
 def get_image_links(
     navigation_links: list, image_link_class: str, link_prefix: str = ""
 ):
@@ -41,7 +47,9 @@ def get_image_links(
         image_links.extend(links)
     return image_links
 
-
+'''
+Some image file names are extremely long, we short to 255 so we don't have any errors
+'''
 def shorten_file_name(file_name: str):
     file_name = file_name.split(".")
     file_extension = file_name.pop()
@@ -53,7 +61,15 @@ def shorten_file_name(file_name: str):
     file_name = f"{file_name}.{file_extension}"
     return file_name
 
-
+'''
+Goes to each images page then
+    - determines which license is being used 
+        - If it is compatible with CC-SA 4.0, then we scrape
+        - If not, skip
+    - If we scrape the image
+        - We locate the author name on the image page and save it in a JSON file
+        - We download the image and save it in the output directory
+'''
 def download_images(image_links: list, output_dir: str):
     acceptible_licenses = [
         re.compile(f"Attribution-Share Alike {i}") for i in [2.0, 2.5, 3.0, 4.0]
@@ -100,7 +116,9 @@ def download_images(image_links: list, output_dir: str):
             attributions_file.seek(0)
             json.dump(attributions, attributions_file, indent=4)
 
-
+'''
+Input validation to see if the specified category actually exists
+'''
 def category_exists(category):
     res = requests.get(WIKIMEDIA_URL + "/wiki/Category:" + category)
     if res.status_code == 200:
@@ -108,7 +126,9 @@ def category_exists(category):
 
     return False
 
-
+'''
+Gets the link for the main category and any subcategory which we will scrape
+'''
 def get_all_category_urls(category: str, max_depth: int) -> list:
     if max_depth == 0:
         return [WIKIMEDIA_URL + "/wiki/Category:" + category]
@@ -135,7 +155,9 @@ def get_all_category_urls(category: str, max_depth: int) -> list:
 
     return all_category_urls
 
-
+'''
+Once the scraping is finished, we use this function to aggregate all of the image attribution into a single file
+'''
 def aggregate_attributions(output_dir):
     attributions = dict()
     for category in os.listdir(output_dir):
@@ -159,13 +181,24 @@ def aggregate_attributions(output_dir):
     with open(os.path.join(output_dir, "attributions.json"), "w") as attributions_file:
         json.dump(attributions, attributions_file, indent=4)
 
+'''
+If during the previous run, we has to stop before completely downloading a category, we delete it
 
+This is used when we continue downloading from the category which we left off from
+'''
 def cleanup_incomplete(output_dir):
     for category in os.listdir(output_dir):
         if category.endswith("_*incomplete"):
             shutil.rmtree(os.path.join(output_dir, category))
 
 
+'''
+Main scrape function
+    - Removes incomplete categories
+    - Shortens the number of categories if the user specified a limit
+    - Gets all image links in each category and downloads them into the category directory
+    - Aggregates attributions
+'''
 def scrape(category_urls, output_dir, max_categories=0):
     cleanup_incomplete(output_dir)
 
@@ -200,7 +233,9 @@ def scrape(category_urls, output_dir, max_categories=0):
 
     aggregate_attributions(output_dir)
 
-
+'''
+Asks user for information about what to scrape, then scrapes that
+'''
 def main(*args, **kwargs):
     category = input("Enter category to scrape\n> ")
     if not category_exists(category):

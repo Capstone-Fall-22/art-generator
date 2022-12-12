@@ -10,9 +10,6 @@ from tensorflow.keras.layers import (
     Flatten,
     Dropout,
     BatchNormalization,
-    Activation,
-    ZeroPadding2D,
-    LeakyReLU,
     UpSampling2D,
     Conv2D,
     Conv2DTranspose,
@@ -21,6 +18,17 @@ from tensorflow.keras.layers import (
 )
 
 
+'''
+Builds and returns a tensorflow Sequential model with the architecture of a GAN generator
+Experiment config file controls
+    - How long the input seed it
+    - The size of the initial generated image
+    - Whether to use batch normalization or not
+    - What type of weight initializer to use
+    - Output image dimensions
+    - How many hidden layers to include 
+        - Whether those hidden layers use upsampling or deconvolution to grow images
+'''
 def build_generator(config):
     # ===========================================================================
     # Input Layer
@@ -124,7 +132,19 @@ def build_generator(config):
 
     return generator
 
+'''
+Builds and returns a tensorflow Sequential model with the architecture of a GAN discriminator
 
+Experiment config file controls:
+    - Input image size
+    - Number of hidden layers
+    - Stride sizes
+    - Kernel sizes
+    - Number of filters per convolutional layers
+    - Output layer
+        - How many units to have (usually 1)
+        - The activation function used
+'''
 def build_discriminator(config):
     # ===========================================================================
     # Input Layer
@@ -180,13 +200,19 @@ def build_discriminator(config):
     return discriminator
 
 
-
+'''
+Builds (loads into memory) a untrained generator and discriminator model for experimentation
+'''
 def load_model(config):
     generator = build_generator(config["generator"])
     discriminator = build_discriminator(config["discriminator"])
     # print(generator.summary(), discriminator.summary())
     return generator, discriminator
 
+'''
+Utility function to view the architecture of the generator and discriminator defined in the config
+    - Useful for viewing how changes to the config affect the model architecture
+'''
 def get_architecture(config):
     generator = build_generator(config["generator"])
     discriminator = build_discriminator(config["discriminator"])

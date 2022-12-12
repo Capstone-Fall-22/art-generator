@@ -2,6 +2,12 @@ import os, sys, json, pathlib
 import cv2
 from concurrent.futures import ThreadPoolExecutor
 
+
+'''
+Prepares a dictionary for the resizing functionality
+
+Generates an input/output path based on where this file is located on the computer
+'''
 def load_config():
     config = json.load(open(os.path.join(pathlib.Path(__file__).parent.resolve(), "resize_config.json")))
     config["input_path"] = os.path.join(pathlib.Path(__file__).parent.parent.parent.resolve(), "experiments", "data", config["input_dir"])
@@ -9,6 +15,11 @@ def load_config():
     return config
 
 
+'''
+Grows/Shrinks the image until it is almost the right/desired size 
+by growing/shrinking the image by a factor of 1 +/- rescale_factor
+    - If the image is smaller than the desired size, it will grow, otherwise it will shrink
+'''
 def scale_image(image, width, height, rescale_factor):
     if image_fits_in_desired_size(image, width, height):
         # Grow image
@@ -46,7 +57,14 @@ def scale_image(image, width, height, rescale_factor):
 def image_fits_in_desired_size(image, width, height):
     return image.shape[0] <= height and image.shape[1] <= width
 
-
+'''
+Resizes image dataset based on config file
+Config file controls:
+    - Input/output path
+    - Whether we are cropping or resizing
+        - If we are resizing, rescale factor determines how much we resize by
+    - Zero pad limit
+'''
 def resize_image(
     image_path, output_path, width, height, rescale_factor=0.1, zero_pad_limit=0.5
 ):
@@ -89,7 +107,9 @@ def resize_image(
 
     cv2.imwrite(output_path, image)
 
-
+'''
+Creates output directories for resized dataset
+'''
 def prepare_output_dirs(config):
     if not os.path.exists(config["output_path"]):
         os.makedirs(config["output_path"])
@@ -100,7 +120,9 @@ def prepare_output_dirs(config):
         if not os.path.exists(category_dir):
             os.makedirs(category_dir)
 
-
+'''
+Prepares a list of arguments that is used with thread pool executor to resize images in parallel
+'''
 def get_resize_image_args(config):
     args = []
     for category in os.listdir(config["input_path"]):
@@ -130,11 +152,13 @@ def get_resize_image_args(config):
     return args
 
 
-# Verify that the dimensions of the images in the resized dataset are correct
 
-invalid_image_count = 0
+invalid_image_count = 0 # Global so that we can print it out in the end
 
 
+'''
+Verify that the dimensions of the images in the resized dataset are correct
+'''
 def check_image_size(image_path, width, height):
     global invalid_image_count
     image = cv2.imread(image_path)
@@ -154,7 +178,7 @@ if __name__ == "__main__":
         _ = executor.map(resize_image, *zip(*resize_image_args))
 
     
-
+    # Prepare argument to verify that image sizes are valid in the output dataset in parallel
     check_image_size_args = []
     for category in os.listdir(config["output_path"]):
         category_dir = os.path.join(config["output_path"], category)

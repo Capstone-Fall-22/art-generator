@@ -4,13 +4,17 @@ tf.config.run_functions_eagerly(True)
 import matplotlib.pyplot as plt
 from IPython import display
 from scripts.model.loss import generator_loss, discriminator_loss
-from scripts.data.visualization import display_images
 import numpy as np
 import logging
 
+'''
+Samples the model's output
+
+Generators len(test_seeds) images and displays them using matplotlib, then saves the figure to a file
+'''
 def generate_and_save_images(model, epoch, test_seeds, output_dir):
     # Notice `training` is set to False.
-    # This is so all layers run in inference mode (batchnorm).
+    # This is so all layers run in inference mode (batchnorm doesn't get used in inference mode)
     predictions = model(test_seeds, training=False)
     predictions = predictions.numpy().astype("float32")
     print(np.average(predictions[0]), np.max(predictions[0]), np.min(predictions[0]))
@@ -21,7 +25,6 @@ def generate_and_save_images(model, epoch, test_seeds, output_dir):
     for i, image in enumerate(predictions):
         image = ((image - np.min(image)) * 255) / (np.max(image) - np.min(image))
         image = image.astype("uint8")
-        # print(np.average(image), np.max(image), np.min(image))
         plt.subplot(4, 4, i+1)
         plt.imshow(image)
         plt.axis('off')  
@@ -30,6 +33,20 @@ def generate_and_save_images(model, epoch, test_seeds, output_dir):
     plt.show()
     logger.setLevel(old_level)
 
+
+'''
+A tensorflow compiled function that defines the flow of a single training batch
+
+@tf.function() means its a tensorflow compiled function which is precompiled before training and adds important optimizations for ML
+
+    - Get input seeds for generating images
+    - Use the generator to generate images
+    - Have the discriminator predict whether the images are real or fake on a batch of real images and a batch of fake images
+    - Compute the loss for the generator and discriminator
+    - Applies backpropagation to the generator and discriminator based on loss
+        - Computes gradients using gradient tape
+        - Applies the gradients (updates model weights towards hopefully better performance)
+'''
 @tf.function()
 def train_step(config, real_image_batch):
     input_noise_seeds = tf.random.normal([config['batch_size'], config['len_seed']])
@@ -51,6 +68,17 @@ def train_step(config, real_image_batch):
 
     return gen_loss, disc_loss
 
+'''
+Main training loop which goes through all of the epochs of training
+
+    - Starts by creating the folders for the experiment results
+    - Validates certain config values
+    - Creates a constant set of seeds so we can see how well the model does over time
+    - For each epoch, split the dataset into batches and for each batch run a single training step
+        - After it batch, it displays the loss of the generator and discriminator on the batch
+    - At the end of each epoch
+        - Sample the results of the generator and save the generator and discriminator for future use
+'''
 def train(config):
     gc.collect()
     output_dir = f"/content/{config['output_dir']}" if config["colab"] else config['output_dir']
